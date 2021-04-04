@@ -14,8 +14,8 @@ public class StudentPlayer extends PentagoPlayer {
      * associate you with your agent. The constructor should do nothing else.
      */
     public StudentPlayer() {
-        super("xxxxxxxxx");
-    }
+        super("260424285"); // does this mean I'm return my student number? What does super do?
+    }//super with arg? means I'm callingthe super class?
 
     /**
      * This is the primary method that you need to implement. The ``boardState``
@@ -26,10 +26,24 @@ public class StudentPlayer extends PentagoPlayer {
         // You probably will make separate functions in MyTools.
         // For example, maybe you'll need to load some pre-processed best opening
         // strategies...
-        MyTools.getSomething();
+        //MyTools.getSomething();
 
         // Is random the best you can do?
-        Move myMove = boardState.getRandomMove();
+        //Move myMove = boardState.getRandomMove();
+
+
+        //START
+        /* - starting with basic MCTS implementation -but maybe implement a better strategy for game beginning later
+        //also implement EMERGENCY DEFENSE if other player has 4 tokens in a row?
+        */
+
+        //clone the board and get necc info
+        PentagoBoardState boardClone = (PentagoBoardState)boardState.clone();
+        int turnPlayer = boardClone.getTurnPlayer();
+
+        //search!
+        MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
+        Move myMove = mcts.findNextMove(boardClone, turnPlayer);
 
         // Return your move to be processed by the server.
         return myMove;
