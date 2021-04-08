@@ -21,7 +21,12 @@ import java.io.IOException;
 //
 public class Autoplay {
     public static void main(String args[]) {
-        int n_games;
+    //public static void main() {
+    
+        //int n_games = 1;      
+        int n_games;  
+
+        
         try {
             n_games = Integer.parseInt(args[0]);
             if (n_games < 1) {
@@ -32,6 +37,9 @@ public class Autoplay {
                     "First argument to Autoplay must be a positive int " + "giving the number of games to play.");
             return;
         }
+        
+
+        
 
         try {
             ProcessBuilder server_pb = new ProcessBuilder("java", "-cp", "bin", "boardgame.Server", "-ng", "-k");
@@ -51,7 +59,7 @@ public class Autoplay {
                 System.out.println("Game " + i);
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(5);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
@@ -59,7 +67,7 @@ public class Autoplay {
                 Process client1 = ((i % 2 == 0) ? client1_pb.start() : client2_pb.start());
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(5);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }

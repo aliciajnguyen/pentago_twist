@@ -1,0 +1,55 @@
+{
+	"folders": [
+		{
+			"path": "C:/Users/alici/FP1/pentago_twist/src"
+		}
+	],
+	"settings": {},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "java",
+				"name": "Launch Current File",
+				"request": "launch",
+				"mainClass": "${file}"
+			},
+			{
+				"type": "java",
+				"name": "Launch Autoplay",
+				"request": "launch",
+				"mainClass": "autoplay.Autoplay",
+				"projectName": "pentago_twist_60364f44",
+				"args": "1"
+			},
+			{
+				"type": "java",
+				"name": "Launch Client",
+				"request": "launch",
+				"mainClass": "boardgame.Client",
+				"projectName": "pentago_twist_60364f44"
+			},
+			{
+				"type": "java",
+				"name": "Launch Server",
+				"request": "launch",
+				"mainClass": "boardgame.Server",
+				"projectName": "pentago_twist_60364f44"
+			},
+			{
+				"type": "java",
+				"name": "Launch ServerGUI",
+				"request": "launch",
+				"mainClass": "boardgame.ServerGUI",
+				"projectName": "pentago_twist_60364f44"
+			},
+			{
+				"type": "java",
+				"name": "Launch PentagoBoardState",
+				"request": "launch",
+				"mainClass": "pentago_twist.PentagoBoardState",
+				"projectName": "pentago_twist_60364f44"
+			}
+		]
+	}
+}

@@ -14,15 +14,18 @@ public class MC_NodeState {
     double winScore;
 
     //constructor
-    MC_NodeState(){
+    MC_NodeState(PentagoBoardState board){
         this. visitCount = 0;
         this.winScore = 0;
+        this.board = board;
     }
 
     //setters
+    /*
     public void setBoard(PentagoBoardState board){
         this.board = board;
     }
+    */
     public void setPlayerNum(int player_num){
         this.playerNum = player_num;
     }
@@ -41,7 +44,7 @@ public class MC_NodeState {
     }
 
     public int getOpponent(){
-        return 3 - this.playerNum;
+        return 1 - this.playerNum;
     }
 
     //other methods

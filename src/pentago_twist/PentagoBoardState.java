@@ -43,7 +43,7 @@ public class PentagoBoardState extends BoardState {
     private int winner;
     private Random rand;
 
-    PentagoBoardState() {
+    public PentagoBoardState() {
         super();
         this.board = new Piece[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -59,8 +59,8 @@ public class PentagoBoardState extends BoardState {
                 }
             }
         }
-
-        rand = new Random(2019);
+        rand = new Random(System.currentTimeMillis());
+        //rand = new Random(2019);
         winner = Board.NOBODY;
         turnPlayer = FIRST_PLAYER;
         turnNumber = 0;

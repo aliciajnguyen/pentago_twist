@@ -1,0 +1,21 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "1.0.0",
+    "tasks": [
+        {
+            "label": "build for autoplay",
+            "type": "shell",
+            "command": "javac -d C:/Users/alici/FP1/pentago_twist/bin C:/Users/alici/FP1/pentago_twist/src/boardgame/*.java C:/Users/alici/FP1/pentago_twist/src/pentago_twist/*.java C:/Users/alici/FP1/pentago_twist/src/student_player/*.java C:/Users/alici/FP1/pentago_twist/src/autoplay/*.java ",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+  }

@@ -1,6 +1,8 @@
 package student_player;
 
 import boardgame.Move;
+import pentago_twist.PentagoBoard;
+import pentago_twist.PentagoBoardState;
 
 //import pentago_twist.PentagoBoardState;
 //import pentago_twist.PentagoPlayer;
@@ -23,11 +25,14 @@ public class MC_Node {
     private MC_Node parent;
     private ArrayList<MC_Node> children;
     private Move move; //the move that got us to this board state from the parent
+    private long curUCTValue;
 
     //constructor, needs to create a state
-    MC_Node(){
-        MC_NodeState state = new MC_NodeState();
+    MC_Node(PentagoBoardState boardState){
+        MC_NodeState state = new MC_NodeState(boardState);
         this.state = state;
+        ArrayList<MC_Node> children = new ArrayList<MC_Node>();
+        this.children = children;
     }
 
     //setters
@@ -39,6 +44,9 @@ public class MC_Node {
     }
     public void setMove(Move move){
         this.move = move;
+    }
+    public void setUCTValue(long value){
+        this.curUCTValue = value;
     }
 
 
@@ -55,9 +63,17 @@ public class MC_Node {
     public Move getMove(){
         return this.move;
     }
+    public long getUCTValue(){
+        return this.curUCTValue;
+    }
 
 
     //misc methodss
+
+    //add a child to this node's array of children
+    public void addChild(MC_Node child){
+        this.children.add(child);
+    }
     
     //method to get a random child from this node's child list
     public MC_Node getRandomChildNode(){
@@ -75,5 +91,21 @@ public class MC_Node {
         return bestChild;
 
     }
+
+    //method to print the node
+    public void print(){
+        System.out.println("---------------------------------------------------------------");
+        System.out.println("Node | Move that got us here: " + this.move.toPrettyString());
+
+        System.out.println("New Board:");
+        this.getState().getBoard().printBoard();
+        System.out.println("Number of children: " + this.children.size());
+        System.out.println("Win Count: " + this.getState().getWinScore());
+        System.out.println("Visit Count: " + this.getState().getVisitCount());
+        System.out.println("Player number: " + this.getState().getPlayerNum());
+
+        System.out.println("---------------------------------------------------------------");        
+    }
+
 
 }

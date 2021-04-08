@@ -34,39 +34,54 @@ public class MonteCarloTreeSearch{
 
     //note that end time is our variable letting the algo run
     public Move findNextMove(PentagoBoardState board, int player_num){
-        int time_limit = 1500;
+        int time_limit = 5000;
         long start_time = System.currentTimeMillis();
-
-        opponent = 3 - player_num;
+        opponent = 1 - player_num;
 
         //initialize the search tree for this iteration of the algorithm
-        MC_SearchTree tree = new MC_SearchTree();
+        MC_SearchTree tree = new MC_SearchTree(board); 
         MC_Node rootNode = tree.getRootNode();
-
-        //We set the state sttribute (another obj) of the root node
-        //we set the state's board and player attributes
-        rootNode.getState().setBoard(board);
+        //rootNode.getState().setBoard(board);
         rootNode.getState().setPlayerNum(opponent);
-        
+      
         //while the current time - start time is less than elapsed time
         //while(System.currentTimeMillis() - start_time < time_limit){
+
         //DEBUG change time for iterations when debugging, swith after
-        int i = 10;
+        
+        int i = 5;
         while(i > 0){
         i--;    
+        
+        //System.out.print("While loop iteration: " + i);
+
+        
 
             //SELECTION
             MC_Node promisingNode = selectPromisingNode(rootNode);
 
+            //DEBUG
+            /*
+            if(i==4){
+                System.out.println("Selected initial proising node root");
+            }
+            else{
+                System.out.println("Selected a promising node that was not the root");
+            }
+            */
+            
             //EXPANSION
 
             //check if the selected node is a terminal node (ends the game)
             //IF THERE IS NO WINNER in this state, expand node?            
             if (promisingNode.getState().getBoard().getWinner() 
               == Board.NOBODY) {
+                //System.out.println("Found there was no winner yet: ");
                 expandNode(promisingNode);
+                //System.out.println("Expanded the node!: ");
             }
             
+
             //why would the expanded node have hildren? in cases where we generated all the childrem
             //REV note that if we're optimizing move selection, shouldn't select child randomly?
             MC_Node nodeToExplore = promisingNode;
@@ -74,17 +89,27 @@ public class MonteCarloTreeSearch{
                 nodeToExplore = promisingNode.getRandomChildNode();
             }
             
-            //SIMULATION
+            //SIMULATION          
             int playoutResult = simulateRandomPlayout(nodeToExplore);
+            //System.out.println("Simulated play!");
 
             //BACKPROPOGATION
             backPropogation(nodeToExplore, playoutResult);
+            //System.out.println("Backpropogated!");
+
+            System.out.println("At the end of this iteration our explored node looks like:");
+            nodeToExplore.print();
         }
+
+        //print the tree
+        //tree.print_tree();
 
         //build the tree now select the 'best' child node from the root
         //which represents the best move from the current state
         MC_Node winningMoveNode = rootNode.getBestChildNode();
-        tree.setRoot(winningMoveNode); //why do we care about setting the root node to the winner node if we don't save?? do e??
+        System.out.println("                SELECTED MOVE:");
+        winningMoveNode.print();
+        //tree.setRoot(winningMoveNode); //why do we care about setting the root node to the winner node if we don't save?? do e??
         Move bestMove = winningMoveNode.getMove();
         return bestMove;
     }
@@ -95,10 +120,26 @@ SELECTION PHASE
 Methods helpful for the selection phase of the MCTS Algo 
 ****************************************************************************************/
     private MC_Node selectPromisingNode(MC_Node rootNode) {
+        //System.out.println("MCST: Entered selectPromisingNode");
         MC_Node node = rootNode;
-        while (node.getChildren().size() != 0) {
-            node = UC_Tree.findBestNodeWithUCT(node);
+            
+        try{  
+            
+            while (node.getChildren().size() != 0) {
+            //while (node.getChildren() != null){
+                //System.out.println("MCST: selectPromisingNode: node has children");
+                node = UC_Tree.findBestNodeWithUCT(node);
+            }
+            
         }
+        catch(Exception e){
+            System.out.println("MCST: selectPromisingNode: Exception:");
+            System.out.println(e.toString());
+        }
+
+
+        //System.out.println("MCST: exitting sel promising node ");
+
         return node;
     }
 
@@ -124,14 +165,34 @@ private void expandNode(MC_Node node) {
     //Move move = newBoard.getRandomMove(); WTF is up w types here bw move and pentago move
     newBoard.processMove(move);
 
-    //now create a node for the board w the new move, update old node as parent
-    //need to save the move so we can access it later
-    MC_Node newNode = new MC_Node();
-    newNode.getState().setBoard(newBoard);
-    newNode.setMove(move);
-    newNode.setParent(node);
-    newNode.getState().setPlayerNum(node.getState().getOpponent());
-    node.getChildren().add(newNode);
+    //DEBUG
+    /*
+    System.out.println("MCST: expandNode: randomly selected next move");
+    System.out.println("MCST: expandNode: The move was:");
+    System.out.println(move.toPrettyString());
+
+    System.out.println("MCST: expandNode: Board now looks like:");
+    newBoard.printBoard();
+    
+    System.out.println("Current node's children");
+    System.out.println(node.getChildren());
+    */
+    
+        //now create a node for the board w the new move, update old node as parent
+        //need to save the move so we can access it later
+        MC_Node newNode = new MC_Node(newBoard);
+    try{
+        //newNode.getState().setBoard(newBoard);
+        newNode.setMove(move);
+        newNode.setParent(node);        
+        newNode.getState().setPlayerNum(node.getState().getOpponent());
+        node.addChild(newNode); 
+    }
+    catch(Exception e){
+        System.out.println("MCST: expandNode: Exception:");
+        System.out.println(e.toString());
+    }
+    //System.out.println("MCST: expandNode: added next move as new node");
 }
 
 /****************************************************************************************
@@ -149,6 +210,9 @@ private int simulateRandomPlayout(MC_Node node) {
     int boardWinnerStatus = tempBoard.getWinner();
     //int turnPlayer = tempBoard.getTurnPlayer(); //when while exits turn player should be winner? NECESSARY?
     
+    /*REV we're going to add a simple heavier rollout that will improve on random:
+    -offenseive: 
+    --count the num of our pieces on diag, horiz and vert spaces*/
 
     //play the game while no one has won
     while (boardWinnerStatus==Board.NOBODY){
@@ -171,6 +235,8 @@ BACKPROPOGATION PHASE
 
 Methods helpful for the backpropogation phase of the MCTS Algo 
 ****************************************************************************************/
+
+//TOOD must be prop'd differently depending on the player
 private void backPropogation(MC_Node nodeToExplore, int playerNo) {
     MC_Node tempNode = nodeToExplore;
     while (tempNode != null) {
