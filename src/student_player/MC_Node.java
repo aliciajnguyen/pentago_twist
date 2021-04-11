@@ -25,7 +25,7 @@ public class MC_Node {
     private MC_Node parent;
     private ArrayList<MC_Node> children;
     private Move move; //the move that got us to this board state from the parent
-    private long curUCTValue;
+    private double curUCTValue;
 
     //constructor, needs to create a state
     MC_Node(PentagoBoardState boardState){
@@ -33,6 +33,7 @@ public class MC_Node {
         this.state = state;
         ArrayList<MC_Node> children = new ArrayList<MC_Node>();
         this.children = children;
+        this.curUCTValue = 0;
     }
 
     //setters
@@ -45,7 +46,7 @@ public class MC_Node {
     public void setMove(Move move){
         this.move = move;
     }
-    public void setUCTValue(long value){
+    public void setUCTValue(double value){
         this.curUCTValue = value;
     }
 
@@ -63,7 +64,7 @@ public class MC_Node {
     public Move getMove(){
         return this.move;
     }
-    public long getUCTValue(){
+    public double getUCTValue(){
         return this.curUCTValue;
     }
 
@@ -95,14 +96,24 @@ public class MC_Node {
     //method to print the node
     public void print(){
         System.out.println("---------------------------------------------------------------");
-        System.out.println("Node | Move that got us here: " + this.move.toPrettyString());
 
-        System.out.println("New Board:");
-        this.getState().getBoard().printBoard();
-        System.out.println("Number of children: " + this.children.size());
-        System.out.println("Win Count: " + this.getState().getWinScore());
-        System.out.println("Visit Count: " + this.getState().getVisitCount());
-        System.out.println("Player number: " + this.getState().getPlayerNum());
+        try{
+            System.out.println("Node | Move that got us here: " + this.move.toPrettyString());
+
+            System.out.println("New Board:");
+            this.getState().getBoard().printBoard();
+            System.out.println("Number of children: " + this.children.size());
+            System.out.println("Win Count: " + this.getState().getWinScore());
+            System.out.println("Visit Count: " + this.getState().getVisitCount());
+            System.out.println("Player number: " + this.getState().getPlayerNum());
+            System.out.println("Cur UCT Value: " + this.getUCTValue());
+        }
+        catch(Exception e){
+            System.out.println("Error printing node:");
+            System.out.println(e.toString());
+            System.out.println("Board:");
+            this.getState().getBoard().printBoard();
+        }
 
         System.out.println("---------------------------------------------------------------");        
     }

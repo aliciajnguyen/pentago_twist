@@ -34,7 +34,7 @@ public class MonteCarloTreeSearch{
 
     //note that end time is our variable letting the algo run
     public Move findNextMove(PentagoBoardState board, int player_num){
-        int time_limit = 5000;
+        int time_limit = 1500;
         long start_time = System.currentTimeMillis();
         opponent = 1 - player_num;
 
@@ -43,15 +43,23 @@ public class MonteCarloTreeSearch{
         MC_Node rootNode = tree.getRootNode();
         //rootNode.getState().setBoard(board);
         rootNode.getState().setPlayerNum(opponent);
-      
+
+
+
+        //DEBUG
+        System.out.println("Root node:");
+        rootNode.print();
+         
+   
         //while the current time - start time is less than elapsed time
-        //while(System.currentTimeMillis() - start_time < time_limit){
+        while(System.currentTimeMillis() - start_time < time_limit){
 
         //DEBUG change time for iterations when debugging, swith after
         
-        int i = 5;
-        while(i > 0){
-        i--;    
+        
+        //int i = 0;
+        //while(i > 5){ //UNCOMMENT LOOP COND AT BOTTOM FOR DEBUG
+          
         
         //System.out.print("While loop iteration: " + i);
 
@@ -60,15 +68,15 @@ public class MonteCarloTreeSearch{
             //SELECTION
             MC_Node promisingNode = selectPromisingNode(rootNode);
 
-            //DEBUG
-            /*
-            if(i==4){
-                System.out.println("Selected initial proising node root");
-            }
-            else{
-                System.out.println("Selected a promising node that was not the root");
-            }
-            */
+
+        
+            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            //System.out.println("For iteration " + i + " our SELECTED NODE WAS was:");
+            System.out.println("For iteration our SELECTED NODE WAS was:");
+            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            promisingNode.print();
+            
+            
             
             //EXPANSION
 
@@ -88,6 +96,13 @@ public class MonteCarloTreeSearch{
             if (promisingNode.getChildren().size() > 0) {
                 nodeToExplore = promisingNode.getRandomChildNode();
             }
+
+            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            //System.out.println("For iteration " + i + " our EXPANDED NODE WAS was:");
+            System.out.println("For iteration our EXPANDED NODE WAS was:");
+            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            nodeToExplore.print();
+
             
             //SIMULATION          
             int playoutResult = simulateRandomPlayout(nodeToExplore);
@@ -97,8 +112,12 @@ public class MonteCarloTreeSearch{
             backPropogation(nodeToExplore, playoutResult);
             //System.out.println("Backpropogated!");
 
-            System.out.println("At the end of this iteration our explored node looks like:");
-            nodeToExplore.print();
+            //DEBUG
+            //System.out.println("At the end of this iteration our explored node looks like:");
+            //nodeToExplore.print();
+
+            //DEBUG
+            //i++;
         }
 
         //print the tree
@@ -137,7 +156,6 @@ Methods helpful for the selection phase of the MCTS Algo
             System.out.println(e.toString());
         }
 
-
         //System.out.println("MCST: exitting sel promising node ");
 
         return node;
@@ -155,44 +173,56 @@ private void expandNode(MC_Node node) {
     create a new node with that updated board
     REV: if we want to make our tree policy more optimal, here is where we'll choose what are
     'good' moves, that should be prioritized
-    WHAT IS THE BENEFIT of creating all children? I don't see it
+    WHAT IS THE BENEFIT of creating all children? I don't see it - its how UTC works
+    -so we must generate a pool of children here, for now they'll be random, but later select these moves w a good heuristic
+
     */
 
-    //clone the board, get a (random) legal move, update the new board
-    PentagoBoardState newBoard = (PentagoBoardState)node.getState().getBoard().clone();
-    ArrayList<PentagoMove> allPossibleMoves = newBoard.getAllLegalMoves();
-    PentagoMove move = allPossibleMoves.get(rand.nextInt(allPossibleMoves.size()));
-    //Move move = newBoard.getRandomMove(); WTF is up w types here bw move and pentago move
-    newBoard.processMove(move);
+    //DEBUG, should be more
+    int numChildren = 10;
 
-    //DEBUG
-    /*
-    System.out.println("MCST: expandNode: randomly selected next move");
-    System.out.println("MCST: expandNode: The move was:");
-    System.out.println(move.toPrettyString());
+    //get all legal moves
+    ArrayList<PentagoMove> allPossibleMoves = node.getState().getBoard().getAllLegalMoves();
+    
 
-    System.out.println("MCST: expandNode: Board now looks like:");
-    newBoard.printBoard();
+    while(numChildren>0){
     
-    System.out.println("Current node's children");
-    System.out.println(node.getChildren());
-    */
+        //clone the board, get a (random) legal move from list and del, update the new board
+        PentagoBoardState newBoard = (PentagoBoardState)node.getState().getBoard().clone();
+        PentagoMove move = allPossibleMoves.get(rand.nextInt(allPossibleMoves.size()));
+        allPossibleMoves.remove(move);
+        newBoard.processMove(move);
+
+        //DEBUG
+        /*
+        System.out.println("MCST: expandNode: randomly selected next move");
+        System.out.println("MCST: expandNode: The move was:");
+        System.out.println(move.toPrettyString());
+
+        System.out.println("MCST: expandNode: Board now looks like:");
+        newBoard.printBoard();
+        
+        System.out.println("Current node's children");
+        System.out.println(node.getChildren());
+        */
+        
+            //now create a node for the board w the new move, update old node as parent
+            //need to save the move so we can access it later
+            MC_Node newNode = new MC_Node(newBoard);
+        try{
+            //newNode.getState().setBoard(newBoard);
+            newNode.setMove(move);
+            newNode.setParent(node);        
+            newNode.getState().setPlayerNum(node.getState().getOpponent());
+            node.addChild(newNode); 
+        }
+        catch(Exception e){
+            System.out.println("MCST: expandNode: Exception:");
+            System.out.println(e.toString());
+        }
     
-        //now create a node for the board w the new move, update old node as parent
-        //need to save the move so we can access it later
-        MC_Node newNode = new MC_Node(newBoard);
-    try{
-        //newNode.getState().setBoard(newBoard);
-        newNode.setMove(move);
-        newNode.setParent(node);        
-        newNode.getState().setPlayerNum(node.getState().getOpponent());
-        node.addChild(newNode); 
+        numChildren--;
     }
-    catch(Exception e){
-        System.out.println("MCST: expandNode: Exception:");
-        System.out.println(e.toString());
-    }
-    //System.out.println("MCST: expandNode: added next move as new node");
 }
 
 /****************************************************************************************

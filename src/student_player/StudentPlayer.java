@@ -2,9 +2,15 @@ package student_player;
 
 import boardgame.Move;
 import jdk.nashorn.api.tree.DebuggerTree;
+//import jdk.tools.jlink.internal.Platform;
 import pentago_twist.PentagoPlayer;
 import pentago_twist.PentagoBoardState;
+import pentago_twist.PentagoMove;
 import jdk.nashorn.api.tree.DebuggerTree;
+import static pentago_twist.PentagoBoardState.Piece.*;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 /** A player file submitted by a student. */
 public class StudentPlayer extends PentagoPlayer {
@@ -24,7 +30,7 @@ public class StudentPlayer extends PentagoPlayer {
      * make decisions.
      */
     public Move chooseMove(PentagoBoardState boardState) {
-        Move myMove;
+        
 
         // You probably will make separate functions in MyTools.
         // For example, maybe you'll need to load some pre-processed best opening
@@ -41,21 +47,56 @@ public class StudentPlayer extends PentagoPlayer {
         //also implement EMERGENCY DEFENSE if other player has 4 tokens in a row?
         */
 
-        
-    
+
         
         //clone the board and get necc info
         PentagoBoardState boardClone = (PentagoBoardState)boardState.clone();
         int turnPlayer = boardClone.getTurnPlayer();
-
+        Move myMove;
+        Random rand = new Random(System.currentTimeMillis());
+       
         //DEBUG
         int turnNo = boardClone.getTurnNumber();
 
-        //System.out.println("Your Turn:" + turnNo);
+        //First player to play IS ALWAYS WHITE, but player 0 or 1 may be player who plays first
 
-        MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
-        myMove = mcts.findNextMove(boardClone, turnPlayer);
+        //if its the first or second move we use a preplanned strategy
+        if (boardClone.getTurnNumber() == 0 || boardClone.getTurnNumber() == 1){
+         
+            PentagoMove PMove1 = new PentagoMove("1 1 0 0 " + turnPlayer);
+            PentagoMove PMove2 = new PentagoMove("1 4 1 0 " + turnPlayer);
+            PentagoMove PMove3 = new PentagoMove("4 1 2 0 " + turnPlayer);
+            PentagoMove PMove4 = new PentagoMove("4 4 3 0 " + turnPlayer);
 
+            ArrayList<PentagoMove> moves = new ArrayList();
+
+            //if space is free add to list for rand selection
+            if (boardClone.getPieceAt(1, 1)== EMPTY){ 
+                moves.add(PMove1);
+            }
+            if (boardClone.getPieceAt(1, 4)== EMPTY){
+                moves.add(PMove2);
+            }
+            if (boardClone.getPieceAt(4, 1)== EMPTY){
+                moves.add(PMove3);
+            }
+            if (boardClone.getPieceAt(4, 4)== EMPTY){
+                moves.add(PMove4);
+            }
+
+            myMove = (Move) moves.get(rand.nextInt(moves.size()));            
+
+            System.out.println("Initial move was: " + myMove.toPrettyString());
+            boardClone.printBoard();
+        }
+        else{
+            MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
+            myMove = mcts.findNextMove(boardClone, turnPlayer);
+        }
+    
+
+
+        //DEBUG
         //if its the first move, start with a random move
         //does move start at 0 or 1?
         /*
@@ -71,21 +112,7 @@ public class StudentPlayer extends PentagoPlayer {
         }
         */
 
-        //DEBUG
-        /*
 
-        try{
-            if (boardClone.getTurnNumber() == 1){
-                System.out.println("Halt for debug at 2nd move");
-                Thread.sleep(30000);
-            }
-        }
-        catch(Exception e){
-            Thread.currentThread().interrupt();
-        }
-        */
-
-        /////////////////////////////////////////////////////////////////////////
         
 
         // Return your move to be processed by the server.

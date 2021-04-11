@@ -21,8 +21,8 @@ public class UC_Tree {
       
       //DEBUG
       //TODO why isn't this printing?
-      System.out.println("       Calculated UCT score: " + UCTValue);
-      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
+      //System.out.println("       Calculated UCT score: " + UCTValue);
+      //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
 
       return UCTValue;
     }
@@ -37,10 +37,31 @@ public class UC_Tree {
       //then compute and update for all children in list
       //pick highest //use comparator sort
 
+      for (MC_Node n : node.getChildren()){
+        n.setUCTValue(calcUCTValue(parentVisit, n.getState().getWinScore(), n.getState().getVisitCount()));
+        System.out.println("///////////////////////////////////////////////////////");
+        System.out.println("The node whose UCT value was calculated:");
+        System.out.println("///////////////////////////////////////////////////////");
+        n.print();
+        System.out.println("UCT VALUE: " + n.getUCTValue());
+      }
+
+      
+      //then sort? CHECK HERE:https://www.baeldung.com/java-8-comparator-comparing
+      MC_Node bestNode = Collections.max(node.getChildren(), Comparator.comparing(c -> c.getUCTValue()));
+      //System.out.println("Child w best UCT value (to be selected): " + n.getUCTValue());
+
+      //https://stackoverflow.com/questions/5805602/how-to-sort-list-of-objects-by-some-property
+      //wtf
+      
+
+      /*
+      //working? maybe?
       MC_Node bestNode = Collections.max(
       node.getChildren(),
       Comparator.comparing(c -> calcUCTValue(parentVisit, 
             c.getState().getWinScore(), c.getState().getVisitCount())));
+      */
 
       return bestNode;
     }
