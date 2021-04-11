@@ -34,7 +34,7 @@ public class MonteCarloTreeSearch{
 
     //note that end time is our variable letting the algo run
     public Move findNextMove(PentagoBoardState board, int player_num){
-        int time_limit = 1500;
+        int time_limit = 1700;
         long start_time = System.currentTimeMillis();
         opponent = 1 - player_num;
 
@@ -47,8 +47,8 @@ public class MonteCarloTreeSearch{
 
 
         //DEBUG
-        System.out.println("Root node:");
-        rootNode.print();
+        //System.out.println("Root node:");
+        //rootNode.print();
          
    
         //while the current time - start time is less than elapsed time
@@ -69,15 +69,13 @@ public class MonteCarloTreeSearch{
             MC_Node promisingNode = selectPromisingNode(rootNode);
 
 
-        
-            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
-            //System.out.println("For iteration " + i + " our SELECTED NODE WAS was:");
-            System.out.println("For iteration our SELECTED NODE WAS was:");
-            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
-            promisingNode.print();
+            //DEBUG
+            //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            //System.out.println("For iteration our SELECTED NODE WAS was:");
+            //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            //promisingNode.print();
             
-            
-            
+                        
             //EXPANSION
 
             //check if the selected node is a terminal node (ends the game)
@@ -97,11 +95,11 @@ public class MonteCarloTreeSearch{
                 nodeToExplore = promisingNode.getRandomChildNode();
             }
 
-            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
-            //System.out.println("For iteration " + i + " our EXPANDED NODE WAS was:");
-            System.out.println("For iteration our EXPANDED NODE WAS was:");
-            System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
-            nodeToExplore.print();
+            //DEBUG
+            //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            //System.out.println("For iteration our EXPANDED NODE WAS was:");
+            //System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+            //nodeToExplore.print();
 
             
             //SIMULATION          
@@ -126,8 +124,9 @@ public class MonteCarloTreeSearch{
         //build the tree now select the 'best' child node from the root
         //which represents the best move from the current state
         MC_Node winningMoveNode = rootNode.getBestChildNode();
-        System.out.println("                SELECTED MOVE:");
-        winningMoveNode.print();
+        //DEBUG
+        //System.out.println("                SELECTED MOVE:");
+        //winningMoveNode.print();
         //tree.setRoot(winningMoveNode); //why do we care about setting the root node to the winner node if we don't save?? do e??
         Move bestMove = winningMoveNode.getMove();
         return bestMove;
@@ -192,20 +191,7 @@ private void expandNode(MC_Node node) {
         PentagoMove move = allPossibleMoves.get(rand.nextInt(allPossibleMoves.size()));
         allPossibleMoves.remove(move);
         newBoard.processMove(move);
-
-        //DEBUG
-        /*
-        System.out.println("MCST: expandNode: randomly selected next move");
-        System.out.println("MCST: expandNode: The move was:");
-        System.out.println(move.toPrettyString());
-
-        System.out.println("MCST: expandNode: Board now looks like:");
-        newBoard.printBoard();
-        
-        System.out.println("Current node's children");
-        System.out.println(node.getChildren());
-        */
-        
+       
             //now create a node for the board w the new move, update old node as parent
             //need to save the move so we can access it later
             MC_Node newNode = new MC_Node(newBoard);

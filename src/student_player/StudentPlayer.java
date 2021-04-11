@@ -5,9 +5,9 @@ import jdk.nashorn.api.tree.DebuggerTree;
 //import jdk.tools.jlink.internal.Platform;
 import pentago_twist.PentagoPlayer;
 import pentago_twist.PentagoBoardState;
-import pentago_twist.PentagoMove;
+//import pentago_twist.PentagoMove;
 import jdk.nashorn.api.tree.DebuggerTree;
-import static pentago_twist.PentagoBoardState.Piece.*;
+//import static pentago_twist.PentagoBoardState.Piece.*;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -46,74 +46,33 @@ public class StudentPlayer extends PentagoPlayer {
         /* - starting with basic MCTS implementation -but maybe implement a better strategy for game beginning later
         //also implement EMERGENCY DEFENSE if other player has 4 tokens in a row?
         */
-
-
-        
+      
         //clone the board and get necc info
         PentagoBoardState boardClone = (PentagoBoardState)boardState.clone();
         int turnPlayer = boardClone.getTurnPlayer();
         Move myMove;
-        Random rand = new Random(System.currentTimeMillis());
-       
-        //DEBUG
-        int turnNo = boardClone.getTurnNumber();
+        int turnNum = boardClone.getTurnNumber();
+        int mode = 0; //DEBUG REV TODO 0 for learning mode, 1 for read mode
 
+        //Random rand = new Random(System.currentTimeMillis());
+       
         //First player to play IS ALWAYS WHITE, but player 0 or 1 may be player who plays first
 
         //if its the first or second move we use a preplanned strategy
-        if (boardClone.getTurnNumber() == 0 || boardClone.getTurnNumber() == 1){
-         
-            PentagoMove PMove1 = new PentagoMove("1 1 0 0 " + turnPlayer);
-            PentagoMove PMove2 = new PentagoMove("1 4 1 0 " + turnPlayer);
-            PentagoMove PMove3 = new PentagoMove("4 1 2 0 " + turnPlayer);
-            PentagoMove PMove4 = new PentagoMove("4 4 3 0 " + turnPlayer);
-
-            ArrayList<PentagoMove> moves = new ArrayList();
-
-            //if space is free add to list for rand selection
-            if (boardClone.getPieceAt(1, 1)== EMPTY){ 
-                moves.add(PMove1);
-            }
-            if (boardClone.getPieceAt(1, 4)== EMPTY){
-                moves.add(PMove2);
-            }
-            if (boardClone.getPieceAt(4, 1)== EMPTY){
-                moves.add(PMove3);
-            }
-            if (boardClone.getPieceAt(4, 4)== EMPTY){
-                moves.add(PMove4);
-            }
-
-            myMove = (Move) moves.get(rand.nextInt(moves.size()));            
-
-            System.out.println("Initial move was: " + myMove.toPrettyString());
-            boardClone.printBoard();
+        if (turnNum == 0 || turnNum == 1){
+            myMove = MyTools.getInitMove(boardClone, turnPlayer);
+            //DEBUG
+            //System.out.println("Initial move was: " + myMove.toPrettyString());
+            //boardClone.printBoard();
         }
         else{
             MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
             myMove = mcts.findNextMove(boardClone, turnPlayer);
         }
-    
 
-
+        //save turn to be written to file
         //DEBUG
-        //if its the first move, start with a random move
-        //does move start at 0 or 1?
-        /*
-        if (boardClone.getTurnNumber() == 0){
-            myMove = boardClone.getRandomMove();
-            //System.out.println("First turn, made rand move ");
-            //PUT NON RANDOM STARTING MOVE HERE?
-        }
-        else{
-            //search!
-            MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
-            myMove = mcts.findNextMove(boardClone, turnPlayer);
-        }
-        */
-
-
-        
+        //MyTools.saveTurn(boardClone, myMove);
 
         // Return your move to be processed by the server.
         return myMove;

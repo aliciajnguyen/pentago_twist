@@ -12,7 +12,7 @@ import java.util.Comparator;
 */
 public class UC_Tree {
     public static double calcUCTValue(int totalVisit, double nodeWinScore, int nodeVisit) {
-      System.out.println("UC_Tree: In calcUCTValue ");
+      //System.out.println("UC_Tree: In calcUCTValue ");
       if (nodeVisit == 0) {
         return Integer.MAX_VALUE;
       }
@@ -30,7 +30,7 @@ public class UC_Tree {
     public static MC_Node findBestNodeWithUCT(MC_Node node) {
       //TO DO: must be calculated differently according to player
 
-      System.out.println("UC_Tree: In find bestNodeWithUCT ");
+      //System.out.println("UC_Tree: In find bestNodeWithUCT ");
       int parentVisit = node.getState().getVisitCount();
       
       //TODO just make UCTValye an attribute of node
@@ -39,11 +39,15 @@ public class UC_Tree {
 
       for (MC_Node n : node.getChildren()){
         n.setUCTValue(calcUCTValue(parentVisit, n.getState().getWinScore(), n.getState().getVisitCount()));
+
+        //DEBUG
+        /*
         System.out.println("///////////////////////////////////////////////////////");
         System.out.println("The node whose UCT value was calculated:");
         System.out.println("///////////////////////////////////////////////////////");
         n.print();
         System.out.println("UCT VALUE: " + n.getUCTValue());
+        */
       }
 
       
