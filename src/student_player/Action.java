@@ -1,8 +1,7 @@
 package student_player;
 
 import boardgame.Move;
-/* A class to represent board states and actions (moves)
-*/
+/* A class to represent board states and actions (moves)*/
 
 public class Action{
     //attributes
@@ -26,7 +25,6 @@ public class Action{
     public int getNumTimesActTaken(){
         return this.numTimesActTaken;
     }
-
 
     //setters
 
